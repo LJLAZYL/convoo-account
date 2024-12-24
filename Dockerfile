@@ -1,24 +1,25 @@
-FROM golang:1.19 AS builder
+# 使用 Go 的官方镜像作为基础镜像
+FROM golang:1.20 AS builder
 
-COPY . /src
-WORKDIR /src
-
-RUN GOPROXY=https://goproxy.cn make build
-
-FROM debian:stable-slim
-
-RUN apt-get update && apt-get install -y --no-install-recommends \
-		ca-certificates  \
-        netbase \
-        && rm -rf /var/lib/apt/lists/ \
-        && apt-get autoremove -y && apt-get autoclean -y
-
-COPY --from=builder /src/bin /app
-
+# 设置工作目录
 WORKDIR /app
 
-EXPOSE 8000
-EXPOSE 9000
-VOLUME /data/conf
+# 将项目代码复制到容器中
+COPY . .
 
-CMD ["./server", "-conf", "/data/conf"]
+# 下载依赖并构建项目
+RUN go mod tidy
+RUN go build -o kratos-server main.go
+
+# 使用轻量级基础镜像运行应用
+FROM alpine:3.16
+WORKDIR /app
+
+# 从构建镜像中复制可执行文件
+COPY --from=builder /app/kratos-server .
+
+# 暴露端口
+EXPOSE 8000
+
+# 运行服务
+CMD ["./kratos-server"]
