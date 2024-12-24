@@ -1,5 +1,5 @@
-# 使用 Go 的官方镜像作为基础镜像
-FROM golang:1.20 AS builder
+# 使用国内的 Golang 镜像作为基础镜像
+FROM registry.cn-hangzhou.aliyuncs.com/aliyun/golang:1.20 AS builder
 
 # 设置工作目录
 WORKDIR /app
@@ -11,8 +11,8 @@ COPY . .
 RUN go mod tidy
 RUN go build -o kratos-server main.go
 
-# 使用轻量级基础镜像运行应用
-FROM alpine:3.16
+# 使用国内的 Alpine 镜像
+FROM registry.cn-hangzhou.aliyuncs.com/aliyun/alpine:3.16
 WORKDIR /app
 
 # 从构建镜像中复制可执行文件
