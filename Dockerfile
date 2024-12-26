@@ -1,5 +1,5 @@
 # 使用 Golang 官方镜像作为构建阶段的基础镜像
-FROM crpi-9h0ljiysae0hwd8o.cn-shenzhen.personal.cr.aliyuncs.com/convoo/golang_1.20:v1.2.0 AS builder
+FROM crpi-9h0ljiysae0hwd8o.cn-shenzhen.personal.cr.aliyuncs.com/convoo/golang_1.21:1.21 AS builder
 
 COPY . /src
 WORKDIR /src
