@@ -8,21 +8,27 @@ WORKDIR /src
 #RUN go mod tidy
 RUN GOPROXY=https://goproxy.cn make build
 
-# 使用轻量级的 Alpine 镜像作为运行时镜像
-FROM crpi-9h0ljiysae0hwd8o.cn-shenzhen.personal.cr.aliyuncs.com/convoo/alpine_3.16:v3.1.6
+FROM crpi-9h0ljiysae0hwd8o.cn-shenzhen.personal.cr.aliyuncs.com/convoo/debian-stable-slim:1.0.0
 
-# 安装必要的依赖（如果有，例如：glibc）
-#RUN apk update && apk add --no-cache libc6-compat
+RUN apt-get update && apt-get install -y --no-install-recommends \
+		ca-certificates  \
+        netbase \
+        && rm -rf /var/lib/apt/lists/ \
+        && apt-get autoremove -y && apt-get autoclean -y
 
 # 设置工作目录为 /app
 COPY --from=builder /src/bin /app
+
+COPY ./configs /data/configs
+RUN ["chmod", "-R", "777", "/data"]
 
 WORKDIR /app
 
 # 暴露容器的端口
 EXPOSE 8000
+EXPOSE 9000
 
 VOLUME /data/conf
 
 # 运行 Kratos 应用
-CMD ["./server", "-conf", "/data/conf"]
+CMD ["./convoo-accounts", "-conf", "/data/configs"]
