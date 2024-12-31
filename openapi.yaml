@@ -4,19 +4,18 @@
 openapi: 3.0.3
 info:
     title: Greeter API
-    description: The greeting service definition.
+    description: 问候服务定义
     version: 0.0.1
 paths:
-    /helloworld/{name}:
+    /v1/helloworld/sayHello:
         get:
             tags:
                 - Greeter
-            description: Sends a greeting
+            description: 接口测试-是否可以访问
             operationId: Greeter_SayHello
             parameters:
                 - name: name
-                  in: path
-                  required: true
+                  in: query
                   schema:
                     type: string
             responses:
@@ -26,13 +25,154 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/helloworld.v1.HelloReply'
+    /v1/helloworld/testSetCache:
+        get:
+            tags:
+                - Greeter
+            description: redis缓存-测试设置缓存并读取
+            operationId: Greeter_TestSetCache
+            parameters:
+                - name: name
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/helloworld.v1.TestSetCacheReply'
+    v1/helloworld/findByID:
+        get:
+            tags:
+                - Greeter
+            description: 数据库相关-通过id查询
+            operationId: Greeter_FindByID
+            parameters:
+                - name: id
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/helloworld.v1.FindByIDReply'
+    v1/helloworld/listAll:
+        get:
+            tags:
+                - Greeter
+            description: 数据库相关-查询所有
+            operationId: Greeter_ListAll
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/helloworld.v1.ListAllReply'
+    v1/helloworld/save:
+        post:
+            tags:
+                - Greeter
+            description: 数据库相关-保存
+            operationId: Greeter_Save
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/helloworld.v1.SaveRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/helloworld.v1.SaveReply'
+    v1/helloworld/updateByID:
+        post:
+            tags:
+                - Greeter
+            description: 数据库相关-更新
+            operationId: Greeter_UpdateByID
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/helloworld.v1.UpdateByIDRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/helloworld.v1.UpdateByIDReply'
 components:
     schemas:
+        helloworld.v1.FindByIDReply:
+            type: object
+            properties:
+                id:
+                    type: string
+                user_name:
+                    type: string
+                greeting:
+                    type: string
+            description: 响应消息
         helloworld.v1.HelloReply:
             type: object
             properties:
                 message:
                     type: string
-            description: The response message containing the greetings
+            description: 响应消息
+        helloworld.v1.ListAllReply:
+            type: object
+            properties:
+                item:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/helloworld.v1.FindByIDReply'
+            description: 响应消息
+        helloworld.v1.SaveReply:
+            type: object
+            properties:
+                id:
+                    type: string
+            description: 响应消息
+        helloworld.v1.SaveRequest:
+            type: object
+            properties:
+                userName:
+                    type: string
+                greeting:
+                    type: string
+            description: 请求消息
+        helloworld.v1.TestSetCacheReply:
+            type: object
+            properties:
+                message:
+                    type: string
+            description: 响应消息
+        helloworld.v1.UpdateByIDReply:
+            type: object
+            properties:
+                result:
+                    type: boolean
+            description: 响应消息
+        helloworld.v1.UpdateByIDRequest:
+            type: object
+            properties:
+                id:
+                    type: string
+                userName:
+                    type: string
+                greeting:
+                    type: string
+            description: 请求消息
 tags:
     - name: Greeter

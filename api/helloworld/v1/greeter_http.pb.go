@@ -19,25 +19,42 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
+const OperationGreeterFindByID = "/helloworld.v1.Greeter/FindByID"
+const OperationGreeterListAll = "/helloworld.v1.Greeter/ListAll"
+const OperationGreeterSave = "/helloworld.v1.Greeter/Save"
 const OperationGreeterSayHello = "/helloworld.v1.Greeter/SayHello"
+const OperationGreeterTestSetCache = "/helloworld.v1.Greeter/TestSetCache"
+const OperationGreeterUpdateByID = "/helloworld.v1.Greeter/UpdateByID"
 
 type GreeterHTTPServer interface {
-	// SayHello Sends a greeting
+	// FindByID 数据库相关-通过id查询
+	FindByID(context.Context, *FindByIDRequest) (*FindByIDReply, error)
+	// ListAll 数据库相关-查询所有
+	ListAll(context.Context, *ListAllRequest) (*ListAllReply, error)
+	// Save 数据库相关-保存
+	Save(context.Context, *SaveRequest) (*SaveReply, error)
+	// SayHello 接口测试-是否可以访问
 	SayHello(context.Context, *HelloRequest) (*HelloReply, error)
+	// TestSetCache redis缓存-测试设置缓存并读取
+	TestSetCache(context.Context, *TestSetCacheRequest) (*TestSetCacheReply, error)
+	// UpdateByID 数据库相关-更新
+	UpdateByID(context.Context, *UpdateByIDRequest) (*UpdateByIDReply, error)
 }
 
 func RegisterGreeterHTTPServer(s *http.Server, srv GreeterHTTPServer) {
 	r := s.Route("/")
-	r.GET("/helloworld/{name}", _Greeter_SayHello0_HTTP_Handler(srv))
+	r.GET("/v1/helloworld/sayHello", _Greeter_SayHello0_HTTP_Handler(srv))
+	r.POST("v1/helloworld/save", _Greeter_Save0_HTTP_Handler(srv))
+	r.POST("v1/helloworld/updateByID", _Greeter_UpdateByID0_HTTP_Handler(srv))
+	r.GET("v1/helloworld/findByID", _Greeter_FindByID0_HTTP_Handler(srv))
+	r.GET("v1/helloworld/listAll", _Greeter_ListAll0_HTTP_Handler(srv))
+	r.GET("/v1/helloworld/testSetCache", _Greeter_TestSetCache0_HTTP_Handler(srv))
 }
 
 func _Greeter_SayHello0_HTTP_Handler(srv GreeterHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in HelloRequest
 		if err := ctx.BindQuery(&in); err != nil {
-			return err
-		}
-		if err := ctx.BindVars(&in); err != nil {
 			return err
 		}
 		http.SetOperation(ctx, OperationGreeterSayHello)
@@ -53,8 +70,114 @@ func _Greeter_SayHello0_HTTP_Handler(srv GreeterHTTPServer) func(ctx http.Contex
 	}
 }
 
+func _Greeter_Save0_HTTP_Handler(srv GreeterHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in SaveRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationGreeterSave)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.Save(ctx, req.(*SaveRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*SaveReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Greeter_UpdateByID0_HTTP_Handler(srv GreeterHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in UpdateByIDRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationGreeterUpdateByID)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.UpdateByID(ctx, req.(*UpdateByIDRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*UpdateByIDReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Greeter_FindByID0_HTTP_Handler(srv GreeterHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in FindByIDRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationGreeterFindByID)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.FindByID(ctx, req.(*FindByIDRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*FindByIDReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Greeter_ListAll0_HTTP_Handler(srv GreeterHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in ListAllRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationGreeterListAll)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ListAll(ctx, req.(*ListAllRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*ListAllReply)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _Greeter_TestSetCache0_HTTP_Handler(srv GreeterHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in TestSetCacheRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationGreeterTestSetCache)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.TestSetCache(ctx, req.(*TestSetCacheRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*TestSetCacheReply)
+		return ctx.Result(200, reply)
+	}
+}
+
 type GreeterHTTPClient interface {
+	FindByID(ctx context.Context, req *FindByIDRequest, opts ...http.CallOption) (rsp *FindByIDReply, err error)
+	ListAll(ctx context.Context, req *ListAllRequest, opts ...http.CallOption) (rsp *ListAllReply, err error)
+	Save(ctx context.Context, req *SaveRequest, opts ...http.CallOption) (rsp *SaveReply, err error)
 	SayHello(ctx context.Context, req *HelloRequest, opts ...http.CallOption) (rsp *HelloReply, err error)
+	TestSetCache(ctx context.Context, req *TestSetCacheRequest, opts ...http.CallOption) (rsp *TestSetCacheReply, err error)
+	UpdateByID(ctx context.Context, req *UpdateByIDRequest, opts ...http.CallOption) (rsp *UpdateByIDReply, err error)
 }
 
 type GreeterHTTPClientImpl struct {
@@ -65,13 +188,78 @@ func NewGreeterHTTPClient(client *http.Client) GreeterHTTPClient {
 	return &GreeterHTTPClientImpl{client}
 }
 
+func (c *GreeterHTTPClientImpl) FindByID(ctx context.Context, in *FindByIDRequest, opts ...http.CallOption) (*FindByIDReply, error) {
+	var out FindByIDReply
+	pattern := "v1/helloworld/findByID"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationGreeterFindByID))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *GreeterHTTPClientImpl) ListAll(ctx context.Context, in *ListAllRequest, opts ...http.CallOption) (*ListAllReply, error) {
+	var out ListAllReply
+	pattern := "v1/helloworld/listAll"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationGreeterListAll))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *GreeterHTTPClientImpl) Save(ctx context.Context, in *SaveRequest, opts ...http.CallOption) (*SaveReply, error) {
+	var out SaveReply
+	pattern := "v1/helloworld/save"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationGreeterSave))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
 func (c *GreeterHTTPClientImpl) SayHello(ctx context.Context, in *HelloRequest, opts ...http.CallOption) (*HelloReply, error) {
 	var out HelloReply
-	pattern := "/helloworld/{name}"
+	pattern := "/v1/helloworld/sayHello"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationGreeterSayHello))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *GreeterHTTPClientImpl) TestSetCache(ctx context.Context, in *TestSetCacheRequest, opts ...http.CallOption) (*TestSetCacheReply, error) {
+	var out TestSetCacheReply
+	pattern := "/v1/helloworld/testSetCache"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationGreeterTestSetCache))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *GreeterHTTPClientImpl) UpdateByID(ctx context.Context, in *UpdateByIDRequest, opts ...http.CallOption) (*UpdateByIDReply, error) {
+	var out UpdateByIDReply
+	pattern := "v1/helloworld/updateByID"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationGreeterUpdateByID))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

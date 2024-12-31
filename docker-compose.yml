@@ -1,0 +1,33 @@
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - env=dev
+    volumes:
+      - ./configs:/data/configs
+    depends_on:
+      - mysql
+      - redis
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: account_123456
+      MYSQL_DATABASE: accounts
+    ports:
+      - "3306:3306"
+    volumes:
+      - ../mysql_data:/var/lib/mysql
+
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - ../redis_data:/data
+
+volumes:
+  mysql_data:
+  redis_data:

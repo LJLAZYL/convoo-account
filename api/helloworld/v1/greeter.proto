@@ -9,22 +9,107 @@ option java_multiple_files = true;
 option java_package = "dev.kratos.api.helloworld.v1";
 option java_outer_classname = "HelloworldProtoV1";
 
-// The greeting service definition.
+// 问候服务定义
 service Greeter {
-  // Sends a greeting
+  // 接口测试-是否可以访问
   rpc SayHello (HelloRequest) returns (HelloReply) {
     option (google.api.http) = {
-      get: "/helloworld/{name}"
+      get: "/v1/helloworld/sayHello"
+    };
+  }
+
+  // 数据库相关-保存
+  rpc Save (SaveRequest) returns (SaveReply) {
+    option (google.api.http) = {
+      post: "v1/helloworld/save"
+      body: "*"
+    };
+  }
+
+  // 数据库相关-更新
+  rpc UpdateByID (UpdateByIDRequest) returns (UpdateByIDReply) {
+    option (google.api.http) = {
+      post: "v1/helloworld/updateByID"
+      body: "*"
+    };
+  }
+
+  // 数据库相关-通过id查询
+  rpc FindByID (FindByIDRequest) returns (FindByIDReply) {
+    option (google.api.http) = {
+      get: "v1/helloworld/findByID"
+    };
+  }
+
+  // 数据库相关-查询所有
+  rpc ListAll (ListAllRequest) returns (ListAllReply) {
+    option (google.api.http) = {
+      get: "v1/helloworld/listAll"
+    };
+  }
+
+  // redis缓存-测试设置缓存并读取
+  rpc TestSetCache (TestSetCacheRequest) returns (TestSetCacheReply) {
+    option (google.api.http) = {
+      get: "/v1/helloworld/testSetCache"
     };
   }
 }
 
-// The request message containing the user's name.
+// 请求消息
 message HelloRequest {
   string name = 1;
 }
-
-// The response message containing the greetings
+// 响应消息
 message HelloReply {
-  string message = 1;
+  string message = 1 [json_name = "message"];
+}
+
+// 请求消息
+message SaveRequest {
+  string user_name = 1;
+  string greeting = 2;
+}
+// 响应消息
+message SaveReply {
+  int64 id = 1 [json_name = "id"];
+}
+
+// 请求消息
+message UpdateByIDRequest {
+  int64 id = 1;
+  string user_name = 2;
+  string greeting = 3;
+}
+// 响应消息
+message UpdateByIDReply {
+  bool result = 1 [json_name = "result"];
+}
+
+// 请求消息
+message FindByIDRequest {
+  int64 id = 1;
+}
+// 响应消息
+message FindByIDReply {
+  int64 id = 1 [json_name = "id"];
+  string user_name = 2 [json_name = "user_name"];
+  string greeting = 3 [json_name = "greeting"];
+}
+
+// 请求消息
+message ListAllRequest{
+}
+// 响应消息
+message ListAllReply{
+  repeated FindByIDReply item  = 1[json_name = "item"];
+}
+
+// 请求消息
+message TestSetCacheRequest {
+  string name = 1;
+}
+// 响应消息
+message TestSetCacheReply {
+  string message = 1 [json_name = "message"];
 }

@@ -19,15 +19,30 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Greeter_SayHello_FullMethodName = "/helloworld.v1.Greeter/SayHello"
+	Greeter_SayHello_FullMethodName     = "/helloworld.v1.Greeter/SayHello"
+	Greeter_Save_FullMethodName         = "/helloworld.v1.Greeter/Save"
+	Greeter_UpdateByID_FullMethodName   = "/helloworld.v1.Greeter/UpdateByID"
+	Greeter_FindByID_FullMethodName     = "/helloworld.v1.Greeter/FindByID"
+	Greeter_ListAll_FullMethodName      = "/helloworld.v1.Greeter/ListAll"
+	Greeter_TestSetCache_FullMethodName = "/helloworld.v1.Greeter/TestSetCache"
 )
 
 // GreeterClient is the client API for Greeter service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type GreeterClient interface {
-	// Sends a greeting
+	// 接口测试-是否可以访问
 	SayHello(ctx context.Context, in *HelloRequest, opts ...grpc.CallOption) (*HelloReply, error)
+	// 数据库相关-保存
+	Save(ctx context.Context, in *SaveRequest, opts ...grpc.CallOption) (*SaveReply, error)
+	// 数据库相关-更新
+	UpdateByID(ctx context.Context, in *UpdateByIDRequest, opts ...grpc.CallOption) (*UpdateByIDReply, error)
+	// 数据库相关-通过id查询
+	FindByID(ctx context.Context, in *FindByIDRequest, opts ...grpc.CallOption) (*FindByIDReply, error)
+	// 数据库相关-查询所有
+	ListAll(ctx context.Context, in *ListAllRequest, opts ...grpc.CallOption) (*ListAllReply, error)
+	// redis缓存-测试设置缓存并读取
+	TestSetCache(ctx context.Context, in *TestSetCacheRequest, opts ...grpc.CallOption) (*TestSetCacheReply, error)
 }
 
 type greeterClient struct {
@@ -47,12 +62,67 @@ func (c *greeterClient) SayHello(ctx context.Context, in *HelloRequest, opts ...
 	return out, nil
 }
 
+func (c *greeterClient) Save(ctx context.Context, in *SaveRequest, opts ...grpc.CallOption) (*SaveReply, error) {
+	out := new(SaveReply)
+	err := c.cc.Invoke(ctx, Greeter_Save_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *greeterClient) UpdateByID(ctx context.Context, in *UpdateByIDRequest, opts ...grpc.CallOption) (*UpdateByIDReply, error) {
+	out := new(UpdateByIDReply)
+	err := c.cc.Invoke(ctx, Greeter_UpdateByID_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *greeterClient) FindByID(ctx context.Context, in *FindByIDRequest, opts ...grpc.CallOption) (*FindByIDReply, error) {
+	out := new(FindByIDReply)
+	err := c.cc.Invoke(ctx, Greeter_FindByID_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *greeterClient) ListAll(ctx context.Context, in *ListAllRequest, opts ...grpc.CallOption) (*ListAllReply, error) {
+	out := new(ListAllReply)
+	err := c.cc.Invoke(ctx, Greeter_ListAll_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *greeterClient) TestSetCache(ctx context.Context, in *TestSetCacheRequest, opts ...grpc.CallOption) (*TestSetCacheReply, error) {
+	out := new(TestSetCacheReply)
+	err := c.cc.Invoke(ctx, Greeter_TestSetCache_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GreeterServer is the server API for Greeter service.
 // All implementations must embed UnimplementedGreeterServer
 // for forward compatibility
 type GreeterServer interface {
-	// Sends a greeting
+	// 接口测试-是否可以访问
 	SayHello(context.Context, *HelloRequest) (*HelloReply, error)
+	// 数据库相关-保存
+	Save(context.Context, *SaveRequest) (*SaveReply, error)
+	// 数据库相关-更新
+	UpdateByID(context.Context, *UpdateByIDRequest) (*UpdateByIDReply, error)
+	// 数据库相关-通过id查询
+	FindByID(context.Context, *FindByIDRequest) (*FindByIDReply, error)
+	// 数据库相关-查询所有
+	ListAll(context.Context, *ListAllRequest) (*ListAllReply, error)
+	// redis缓存-测试设置缓存并读取
+	TestSetCache(context.Context, *TestSetCacheRequest) (*TestSetCacheReply, error)
 	mustEmbedUnimplementedGreeterServer()
 }
 
@@ -62,6 +132,21 @@ type UnimplementedGreeterServer struct {
 
 func (UnimplementedGreeterServer) SayHello(context.Context, *HelloRequest) (*HelloReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SayHello not implemented")
+}
+func (UnimplementedGreeterServer) Save(context.Context, *SaveRequest) (*SaveReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Save not implemented")
+}
+func (UnimplementedGreeterServer) UpdateByID(context.Context, *UpdateByIDRequest) (*UpdateByIDReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateByID not implemented")
+}
+func (UnimplementedGreeterServer) FindByID(context.Context, *FindByIDRequest) (*FindByIDReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FindByID not implemented")
+}
+func (UnimplementedGreeterServer) ListAll(context.Context, *ListAllRequest) (*ListAllReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListAll not implemented")
+}
+func (UnimplementedGreeterServer) TestSetCache(context.Context, *TestSetCacheRequest) (*TestSetCacheReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TestSetCache not implemented")
 }
 func (UnimplementedGreeterServer) mustEmbedUnimplementedGreeterServer() {}
 
@@ -94,6 +179,96 @@ func _Greeter_SayHello_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Greeter_Save_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SaveRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GreeterServer).Save(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Greeter_Save_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GreeterServer).Save(ctx, req.(*SaveRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Greeter_UpdateByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateByIDRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GreeterServer).UpdateByID(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Greeter_UpdateByID_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GreeterServer).UpdateByID(ctx, req.(*UpdateByIDRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Greeter_FindByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FindByIDRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GreeterServer).FindByID(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Greeter_FindByID_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GreeterServer).FindByID(ctx, req.(*FindByIDRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Greeter_ListAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListAllRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GreeterServer).ListAll(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Greeter_ListAll_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GreeterServer).ListAll(ctx, req.(*ListAllRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Greeter_TestSetCache_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TestSetCacheRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GreeterServer).TestSetCache(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Greeter_TestSetCache_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GreeterServer).TestSetCache(ctx, req.(*TestSetCacheRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Greeter_ServiceDesc is the grpc.ServiceDesc for Greeter service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -104,6 +279,26 @@ var Greeter_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SayHello",
 			Handler:    _Greeter_SayHello_Handler,
+		},
+		{
+			MethodName: "Save",
+			Handler:    _Greeter_Save_Handler,
+		},
+		{
+			MethodName: "UpdateByID",
+			Handler:    _Greeter_UpdateByID_Handler,
+		},
+		{
+			MethodName: "FindByID",
+			Handler:    _Greeter_FindByID_Handler,
+		},
+		{
+			MethodName: "ListAll",
+			Handler:    _Greeter_ListAll_Handler,
+		},
+		{
+			MethodName: "TestSetCache",
+			Handler:    _Greeter_TestSetCache_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

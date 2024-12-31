@@ -8,7 +8,10 @@ COPY . /src
 WORKDIR /src
 
 # 使用 RUN 指令执行命令。在这里，它设置了 Go 的代理服务器为 https://goproxy.cn，然后执行 make build，用来构建 Go 项目（假设你有一个 Makefile 文件，make build 会触发构建流程）
+# 阿里云服务器centos上跑用这个指令
 RUN GOPROXY=https://goproxy.cn GOARCH=amd64 GOOS=linux make build
+# 本地mac跑用下面这个指令
+#RUN GOPROXY=https://goproxy.cn make build
 
 # 这行指定了第二个阶段的基础镜像，这里是一个定制的 Debian 镜像。与第一个镜像不同，这个镜像通常用于运行应用程序，而不是构建应用程序。
 FROM crpi-9h0ljiysae0hwd8o.cn-shenzhen.personal.cr.aliyuncs.com/convoo/debian-stable-slim:1.0.0
