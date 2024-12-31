@@ -8,8 +8,8 @@ server:
 data:
   database:
     driver: mysql
-    source: root:account_123456@tcp(127.0.0.1:3306)/accounts?charset=utf8mb4&parseTime=True&loc=Local
+    source: root:account_123456@tcp(host.docker.internal:3306)/accounts?charset=utf8mb4&parseTime=True&loc=Local
   redis:
-    addr: 127.0.0.1:6379
+    addr: host.docker.internal:6379
     read_timeout: 0.2s
     write_timeout: 0.2s
