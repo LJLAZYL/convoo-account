@@ -18,11 +18,11 @@ FROM crpi-9h0ljiysae0hwd8o.cn-shenzhen.personal.cr.aliyuncs.com/convoo/debian-st
 
 # 更新 apt 的包列表，并安装 ca-certificates 和 netbase 包（这些是最基本的依赖）。--no-install-recommends 选项表示只安装必需的包，不安装推荐包。
 #安装后，清理缓存以减小镜像大小（rm -rf /var/lib/apt/lists/ 以及执行 apt-get autoremove 和 apt-get autoclean）
-RUN apt-get update && apt-get install -y --no-install-recommends \
-		ca-certificates  \
-        netbase \
-        && rm -rf /var/lib/apt/lists/ \
-        && apt-get autoremove -y && apt-get autoclean -y
+#RUN apt-get update && apt-get install -y --no-install-recommends \
+#		ca-certificates  \
+#        netbase \
+#        && rm -rf /var/lib/apt/lists/ \
+#        && apt-get autoremove -y && apt-get autoclean -y
 
 # 从 builder 阶段复制 /src/bin 目录下的文件到 /app 目录，这样就把构建好的 Go 程序从构建镜像复制到运行镜像中
 COPY --from=builder /src/bin /app
